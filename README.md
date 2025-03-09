@@ -73,6 +73,28 @@ A simple expense tracking app that helps you manage your finances by tracking tr
     └── tips_calculator.html   # Tip calculator page
 ```
 
+## Database Schema
+### User table
+```sqlite
+CREATE TABLE users(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+username TEXT NOT NULL UNIQUE,
+password_hash TEXT NOT NULL
+);
+```
+
+### Expense table
+```sqlite
+CREATE TABLE expenses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description TEXT NOT NULL,
+    amount REAL NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+```
+
 ## Future Improvements
 - Keep the app lightweight 
 - Add user registration  
