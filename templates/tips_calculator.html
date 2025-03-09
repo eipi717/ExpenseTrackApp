@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tips Calculator | Expense Track</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Tips Calculator</h2>
+
+        <div class="input-group">
+            <input type="number" id="bill_amount" placeholder="Enter Bill Amount">
+        </div>
+
+        <h3>Select Tip Percentage</h3>
+        <div class="tip-buttons">
+            <button class="tip-btn" onclick="selectTip(10)">10%</button>
+            <button class="tip-btn" onclick="selectTip(12)">12%</button>
+            <button class="tip-btn active" onclick="selectTip(15)">15%</button>
+            <button class="tip-btn" onclick="selectTip(18)">18%</button>
+        </div>
+
+        <button class="btn" onclick="calculateTip()">Calculate</button>
+
+        <h3 id="tip_result"></h3>
+        <h3 id="total_result"></h3>
+
+        <button id="add-expense-btn" class="btn expense-btn" onclick="addExpense()" style="display: none;">
+            Add to Expenses
+        </button>
+
+        <a href="{{ url_for('dashboard') }}"><button class="btn back-btn">Back to Dashboard</button></a>
+    </div>
+
+    <script>
+        let selectedTip = 15; // Default selected tip percentage
+        let totalAmount = 0;  // Store calculated total amount
+
+        function selectTip(tipPercent) {
+            selectedTip = tipPercent;
+            document.querySelectorAll(".tip-btn").forEach(btn => btn.classList.remove("active"));
+            event.target.classList.add("active");
+        }
+
+        function calculateTip() {
+            const bill = parseFloat(document.getElementById("bill_amount").value);
+            if (!bill || bill <= 0) {
+                alert("Please enter a valid bill amount.");
+                return;
+            }
+            const tipAmount = (bill * selectedTip / 100).toFixed(2);
+            totalAmount = (bill + parseFloat(tipAmount)).toFixed(2);
+
+            document.getElementById("tip_result").innerText = `Tip: $${tipAmount}`;
+            document.getElementById("total_result").innerText = `Total Amount: $${totalAmount}`;
+
+            // Show the "Add to Expenses" button after calculation
+            document.getElementById("add-expense-btn").style.display = "block";
+        }
+
+        function addExpense() {
+            fetch("/expenses/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ description: "Meal Expense", amount: -totalAmount })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "expense_added") {
+                    alert("Expense added successfully!");
+                    document.getElementById("add-expense-btn").style.display = "none"; // Hide after adding
+                }
+            })
+            .catch(error => console.error("Error adding expense:", error));
+        }
+    </script>
+</body>
+</html>

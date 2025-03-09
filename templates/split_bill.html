@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Split the Bill | Expense Track</title>
+  <!-- Link to your main stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>Split the Bill</h2>
+
+    <!-- Step 1: Select Tip Percentage -->
+    <h3>Select Tip Percentage</h3>
+    <div class="tip-buttons">
+      <button class="tip-btn" onclick="selectTip(event, 10)">10%</button>
+      <button class="tip-btn" onclick="selectTip(event, 12)">12%</button>
+      <button class="tip-btn active" onclick="selectTip(event, 15)">15%</button>
+      <button class="tip-btn" onclick="selectTip(event, 18)">18%</button>
+    </div>
+
+    <!-- Step 2: Select Split Method -->
+    <h3>Select Split Method</h3>
+    <div class="split-buttons">
+      <button class="split-btn active" onclick="selectSplitMethod('evenly')">Split Evenly</button>
+      <button class="split-btn" onclick="selectSplitMethod('by_item')">Split by Item</button>
+    </div>
+
+    <!-- Common People Section (used by both methods) -->
+    <h3>Enter People Involved</h3>
+    <div class="input-group">
+      <input type="text" id="person_name" placeholder="Person Name">
+      <button class="btn" onclick="addPerson()">Add Person</button>
+    </div>
+    <ul id="person-list"></ul>
+
+    <!-- Evenly Split Section -->
+    <div id="evenly-section">
+      <h3>Enter Total Bill Amount</h3>
+      <div class="input-group">
+        <input type="number" id="evenly_total_bill" placeholder="Total Bill ($)">
+      </div>
+      <button class="btn" onclick="calculateEvenSplit()">Calculate</button>
+      <h3 id="evenly_result"></h3>
+      <h3>People & Amount Owed</h3>
+      <table class="transaction-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Owes</th>
+          </tr>
+        </thead>
+        <tbody id="evenly-person-table"></tbody>
+      </table>
+    </div>
+
+    <!-- Split by Item Section -->
+    <div id="by-item-section" style="display: none;">
+      <!-- Step 1: Button to move to items addition -->
+      <div id="by-item-step-1">
+        <button class="btn next-btn" onclick="switchToItemStep()">Next: Add Items</button>
+      </div>
+      <!-- Step 2: Items addition and calculation -->
+      <div id="by-item-step-2" style="display: none;">
+        <h3>Add Items</h3>
+        <div class="input-group">
+          <input type="text" id="item_name" placeholder="Item Name">
+          <input type="number" id="item_amount" placeholder="Item Cost ($)">
+          <div id="people-checkboxes"></div>
+          <button class="btn" onclick="addItem()">Add Item</button>
+        </div>
+
+        <h4>Added Items</h4>
+        <table class="transaction-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Cost</th>
+              <th>Shared By</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="item-list"></tbody>
+        </table>
+
+        <button class="btn next-btn" onclick="calculateSplitByItem()">Calculate</button>
+        <button class="btn back-btn" onclick="switchToPersonStep()">Go Back</button>
+
+        <h3 id="total_bill_result"></h3>
+
+        <h3>People & Amount Owed</h3>
+        <table class="transaction-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Owes</th>
+            </tr>
+          </thead>
+          <tbody id="person-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <a href="{{ url_for('dashboard') }}">
+      <button class="btn back-btn">Back to Dashboard</button>
+    </a>
+  </div>
+
+  <script>
+    let selectedTip = 15;
+    let people = [];
+    let items = [];
+
+    /* Select Tip Rate */
+    function selectTip(event, tipPercent) {
+      selectedTip = tipPercent;
+      document.querySelectorAll(".tip-btn").forEach(btn => btn.classList.remove("active"));
+      event.target.classList.add("active");
+    }
+
+    /* Toggle the method sections and update active button styles. */
+    function selectSplitMethod(method) {
+      document.querySelectorAll(".split-btn").forEach(btn => btn.classList.remove("active"));
+      if (method === "by_item") {
+        document.querySelector(".split-btn[onclick*='by_item']").classList.add("active");
+        document.getElementById("by-item-section").style.display = "block";
+        document.getElementById("evenly-section").style.display = "none";
+      } else if (method === "evenly") {
+        document.querySelector(".split-btn[onclick*='evenly']").classList.add("active");
+        document.getElementById("evenly-section").style.display = "block";
+        document.getElementById("by-item-section").style.display = "none";
+      }
+    }
+
+    /* Common: Add Person */
+    function addPerson() {
+      const name = document.getElementById("person_name").value.trim();
+      if (!name) {
+        alert("Enter a valid name.");
+        return;
+      }
+      people.push(name);
+      updatePersonList();
+      document.getElementById("person_name").value = "";
+    }
+
+    function updatePersonList() {
+      document.getElementById("person-list").innerHTML = people
+        .map(person => `<li>${person}</li>`)
+        .join("");
+      updatePeopleCheckboxes();
+    }
+
+    /* Update checkboxes in the By-Item section to match the common people list. */
+    function updatePeopleCheckboxes() {
+      const checkboxDiv = document.getElementById("people-checkboxes");
+      if (!checkboxDiv) return;
+      checkboxDiv.innerHTML = people
+        .map(person => `
+          <label>
+            <input type="checkbox" value="${person}" checked> ${person}
+          </label>
+        `)
+        .join("");
+    }
+
+    /* Even Split: calculates each share from a total bill. */
+    function calculateEvenSplit() {
+      const totalBill = parseFloat(document.getElementById("evenly_total_bill").value);
+      if (isNaN(totalBill) || totalBill <= 0) {
+        alert("Enter a valid total bill amount.");
+        return;
+      }
+      if (people.length === 0) {
+        alert("Add at least one person.");
+        return;
+      }
+
+      // Apply tax + tip
+      const totalWithTaxAndTip = totalBill * 1.13 * (1 + selectedTip / 100);
+      const share = totalWithTaxAndTip / people.length;
+
+      document.getElementById("evenly_result").innerText =
+        `Total Bill (w/ Tax & Tip): $${totalWithTaxAndTip.toFixed(2)}`;
+
+      document.getElementById("evenly-person-table").innerHTML = people
+        .map(person => `
+          <tr>
+            <td>${person}</td>
+            <td>$${share.toFixed(2)}</td>
+          </tr>
+        `)
+        .join("");
+    }
+
+    /* By-Item: Step switching */
+    function switchToItemStep() {
+      if (people.length === 0) {
+        alert("Add at least one person first.");
+        return;
+      }
+      document.getElementById("by-item-step-1").style.display = "none";
+      document.getElementById("by-item-step-2").style.display = "block";
+      updatePeopleCheckboxes();
+    }
+
+    function switchToPersonStep() {
+      document.getElementById("by-item-step-1").style.display = "block";
+      document.getElementById("by-item-step-2").style.display = "none";
+    }
+
+    /* By-Item: Add item & update the items list */
+    function addItem() {
+      const itemName = document.getElementById("item_name").value.trim();
+      const itemAmount = parseFloat(document.getElementById("item_amount").value);
+      const sharedBy = Array.from(
+        document.querySelectorAll("#people-checkboxes input:checked")
+      ).map(cb => cb.value);
+
+      if (!itemName || isNaN(itemAmount) || itemAmount <= 0 || sharedBy.length === 0) {
+        alert("Enter a valid item name, cost, and select at least one person.");
+        return;
+      }
+
+      items.push({ name: itemName, cost: itemAmount, sharedBy });
+      updateItemList();
+
+      // Clear inputs
+      document.getElementById("item_name").value = "";
+      document.getElementById("item_amount").value = "";
+    }
+
+    function updateItemList() {
+      document.getElementById("item-list").innerHTML = items
+        .map((item, index) => `
+          <tr>
+            <td>${item.name}</td>
+            <td>$${item.cost.toFixed(2)}</td>
+            <td>${item.sharedBy.join(", ")}</td>
+            <td><button onclick="removeItem(${index})">Remove</button></td>
+          </tr>
+        `)
+        .join("");
+    }
+
+    function removeItem(index) {
+      items.splice(index, 1);
+      updateItemList();
+    }
+
+    /* By-Item: Calculate each person’s share based on the items they share. */
+    function calculateSplitByItem() {
+      let personTotals = {};
+      people.forEach(person => (personTotals[person] = 0));
+
+      items.forEach(item => {
+        const sharePerPerson = item.cost / item.sharedBy.length;
+        item.sharedBy.forEach(person => {
+          personTotals[person] += sharePerPerson;
+        });
+      });
+
+      // Apply tax and tip for each person
+      document.getElementById("person-table").innerHTML = Object.keys(personTotals)
+        .map(person => `
+          <tr>
+            <td>${person}</td>
+            <td>$${(personTotals[person] * 1.13 * (1 + selectedTip / 100)).toFixed(2)}</td>
+          </tr>
+        `)
+        .join("");
+
+      // Calculate the grand total with tax + tip
+      const totalBill =
+        Object.values(personTotals).reduce((a, b) => a + b, 0) *
+        1.13 *
+        (1 + selectedTip / 100);
+
+      document.getElementById("total_bill_result").innerText =
+        `Total Bill (w/ Tax & Tip): $${totalBill.toFixed(2)}`;
+    }
+  </script>
+</body>
+</html>

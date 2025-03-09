@@ -1,0 +1,254 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Container */
+.container {
+    max-width: 450px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+h2 {
+    color: #28a745;
+    margin-bottom: 15px;
+}
+
+/* Input Fields */
+.input-group input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.input-group input:focus {
+    border-color: #28a745;
+    outline: none;
+    box-shadow: 0px 0px 5px rgba(40, 167, 69, 0.5);
+}
+
+/* Buttons */
+.btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    background-color: #28a745;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #218838;
+}
+
+/* Dashboard Buttons */
+.dashboard-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Logout Button */
+.logout-btn {
+    background-color: #dc3545;
+}
+
+.logout-btn:hover {
+    background-color: #c82333;
+}
+
+/* Back Button */
+.back-btn {
+    background-color: #007bff;
+}
+
+.back-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Tip Buttons */
+.tip-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.tip-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 1px solid #28a745;
+    background-color: white;
+    color: #28a745;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.tip-btn:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.tip-btn.active {
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+}
+
+/* Tip Results */
+#tip_result, #total_result {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Add to Expense Button */
+.expense-btn {
+    background-color: #007bff;
+    color: white;
+    display: none;
+}
+
+.expense-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Transaction Table */
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.transaction-table th, .transaction-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.transaction-table th {
+    background-color: #0056b3; /* Dark Blue */
+    color: #ffffff; /* White text for contrast */
+}
+
+.transaction-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.transaction-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Amount Column */
+.transaction-table td:last-child {
+    text-align: right;
+    font-weight: bold;
+}
+
+/* Income/Expense Styling */
+.positive {
+    color: green;
+}
+
+.negative {
+    color: red;
+}
+
+/* Amount Column */
+.transaction-table td:last-child {
+    text-align: right;
+    font-weight: bold;
+}
+
+/* Income/Expense Styling */
+.positive {
+    color: green;
+}
+
+.negative {
+    color: red;
+}
+
+/* Split the Bill Tip & Split Method Buttons */
+.tip-buttons, .split-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.tip-btn, .split-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 1px solid #0056b3;
+    background-color: white;
+    color: #0056b3;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.tip-btn:hover, .split-btn:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.tip-btn.active, .split-btn.active {
+    background-color: #0056b3;
+    color: white;
+    font-weight: bold;
+}
+
+/* Total Bill */
+#total_bill_result {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Remove bullet points and adjust alignment for the people list */
+#person-list {
+  list-style-type: none; /* No default bullets */
+  margin: 0;
+  padding: 0;
+  text-align: left;      /* Left-align the names (change to center if desired) */
+}
+
+#person-list li {
+  margin: 5px 0;        /* Spacing between each name */
+}
+
+/* Wrap each checkbox + label on the same line */
+#people-checkboxes label {
+  display: inline-flex;    /* inline-flex keeps label text on the same line as the checkbox */
+  align-items: center;     /* vertically center the checkbox and label text */
+  margin: 0 10px 0 0;      /* some spacing to the right so they don't crowd each other */
+  white-space: nowrap;     /* prevent label text from wrapping below the checkbox */
+}
+
+#people-checkboxes label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+#people-checkboxes input[type="checkbox"] {
+  margin-right: 5px;       /* small gap between checkbox and label text */
+}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Expense Track</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Dashboard</h2>
+        <div class="dashboard-buttons">
+            <a href="{{ url_for('tip_calculator') }}"><button class="btn">Tip Calculator</button></a>
+            <a href="{{ url_for('expense_tracker') }}"><button class="btn">Expense Tracker</button></a>
+            <a href="{{ url_for('split_bill') }}"><button class="btn">Split Bill</button></a>
+            <a href="{{ url_for('logout') }}"><button class="btn logout-btn">Logout</button></a>
+        </div>
+    </div>
+</body>
+</html>
