@@ -1,7 +1,8 @@
 # Expense Track App
 
-[![license](https://img.shields.io/github/license/dec0dOS/amazing-github-template.svg?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/github/license/dec0dOS/amazing-github-template.svg?style=flat-square)](LICENSE)
 [![made by Nicholas Ho](https://img.shields.io/badge/Created%20by-NicholasHo-red.svg?style=flat-square)](https://www.linkedin.com/in/nicholas-ho-954053216/)
+[![Demo](https://img.shields.io/badge/Demo%20site-blue)](http://192.18.148.63)
 
 A simple expense tracking app that helps you manage your finances by tracking transactions, calculating tips, and splitting bills.
 
@@ -77,6 +78,11 @@ A simple expense tracking app that helps you manage your finances by tracking tr
 - Add user registration  
 - Implement data visualization for spending analysis  
 - Export transaction history to CSV
+
+## Contact
+For any issues, please do not hesitate to contact me at:
+- Email - `nicholasriven717@gmail.com`
+- LinkedIn - [Click the Link](https://www.linkedin.com/in/nicholaschho/)
 
 ## License
 This project is licensed under the **MIT License**.
